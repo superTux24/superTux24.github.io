@@ -1,0 +1,16 @@
+{
+  "terminal": {
+    "shell": {
+      "with_arguments": {
+        "program": "toolbox",
+        "args": ["enter", "dev"]
+      }
+    },
+    "detect_venv": {
+      "on": {
+        "directories": ["env", ".venv", "venv"],
+        "activate_script": "default"
+      }
+    }
+  }
+}

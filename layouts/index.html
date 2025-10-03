@@ -1,0 +1,509 @@
+{{ define "main" }}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 2rem;
+        border-radius: var(--border-radius);
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.05"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+        animation: float 20s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-20px) rotate(1deg);
+        }
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
+        margin-bottom: 2rem;
+        opacity: 0.95;
+        font-weight: 400;
+    }
+
+    .stats-container {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #fff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 0.5rem;
+    }
+
+    .language-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+
+    .language-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+        box-shadow: var(--box-shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .language-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(52, 152, 219, 0.1),
+            transparent
+        );
+        transition: left 0.5s;
+    }
+
+    .language-card:hover::before {
+        left: 100%;
+    }
+
+    .language-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-flags {
+        font-size: 2.5rem;
+        margin: 0 1rem;
+    }
+
+    .card-arrow {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+        font-weight: bold;
+    }
+
+    .card-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--secondary-color);
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+
+    .card-description {
+        color: #7f8c8d;
+        text-align: center;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+
+    .card-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 6px;
+        margin-top: 1rem;
+    }
+
+    .card-count {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .card-action {
+        font-size: 0.9rem;
+        color: var(--success-color);
+        font-weight: 500;
+    }
+
+    .features-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 3rem 2rem;
+        margin: 3rem 0;
+        box-shadow: var(--box-shadow);
+    }
+
+    .features-title {
+        text-align: center;
+        font-size: 2rem;
+        color: var(--secondary-color);
+        margin-bottom: 2rem;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+    }
+
+    .feature-item {
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .feature-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--secondary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-description {
+        color: #7f8c8d;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .quick-actions {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        text-align: center;
+        margin: 3rem 0;
+    }
+
+    .quick-actions h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .quick-actions p {
+        margin-bottom: 1.5rem;
+        opacity: 0.9;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .action-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+
+    .help-section {
+        background: #e8f5e8;
+        border: 1px solid #c3e6cb;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+
+    .help-title {
+        color: #155724;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .help-content {
+        color: #155724;
+        line-height: 1.6;
+    }
+
+    .help-content p {
+        margin-bottom: 1rem;
+    }
+
+    .help-content code {
+        background: rgba(21, 87, 36, 0.1);
+        padding: 0.2rem 0.5rem;
+        border-radius: 3px;
+        font-family: "Courier New", monospace;
+        color: #0d4419;
+    }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .stats-container {
+            gap: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+
+        .language-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .features-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .action-btn {
+            width: 100%;
+            max-width: 200px;
+        }
+    }
+</style>
+
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">Dictionnaire Bilingue</h1>
+        <p class="hero-subtitle">Français ⇄ Danois / Fransk ⇄ Dansk</p>
+
+        <div class="stats-container">
+            <div class="stat-item">
+                <span class="stat-number"
+                    >{{ len .Site.Data.dictionary.fr_da }}</span
+                >
+                <span class="stat-label">Mots français</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number"
+                    >{{ len .Site.Data.dictionary.da_fr }}</span
+                >
+                <span class="stat-label">Mots danois</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number"
+                    >{{ add (len .Site.Data.dictionary.fr_da) (len
+                    .Site.Data.dictionary.da_fr) }}</span
+                >
+                <span class="stat-label">Total traductions</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="language-grid">
+    <a href="/fr-da/" class="language-card">
+        <div class="card-header">
+            <span class="card-flags">🇫🇷</span>
+            <span class="card-arrow">→</span>
+            <span class="card-flags">🇩🇰</span>
+        </div>
+        <h3 class="card-title">Français vers Danois</h3>
+        <p class="card-description">
+            Trouvez les traductions des mots français vers le danois avec des
+            exemples d'utilisation et la prononciation.
+        </p>
+        <div class="card-stats">
+            <span class="card-count"
+                >{{ len .Site.Data.dictionary.fr_da }} entrées</span
+            >
+            <span class="card-action">Explorer →</span>
+        </div>
+    </a>
+
+    <a href="/da-fr/" class="language-card">
+        <div class="card-header">
+            <span class="card-flags">🇩🇰</span>
+            <span class="card-arrow">→</span>
+            <span class="card-flags">🇫🇷</span>
+        </div>
+        <h3 class="card-title">Danois vers Français</h3>
+        <p class="card-description">
+            Découvrez les traductions des mots danois vers le français avec des
+            contextes d'usage pratiques.
+        </p>
+        <div class="card-stats">
+            <span class="card-count"
+                >{{ len .Site.Data.dictionary.da_fr }} entrées</span
+            >
+            <span class="card-action">Explorer →</span>
+        </div>
+    </a>
+</div>
+
+<div class="features-section">
+    <h2 class="features-title">✨ Fonctionnalités</h2>
+    <div class="features-grid">
+        <div class="feature-item">
+            <span class="feature-icon">🔍</span>
+            <h3 class="feature-title">Recherche instantanée</h3>
+            <p class="feature-description">
+                Trouvez rapidement vos traductions grâce à notre fonction de
+                recherche en temps réel.
+            </p>
+        </div>
+        <div class="feature-item">
+            <span class="feature-icon">📚</span>
+            <h3 class="feature-title">Exemples pratiques</h3>
+            <p class="feature-description">
+                Chaque traduction inclut des exemples d'utilisation pour mieux
+                comprendre le contexte.
+            </p>
+        </div>
+        <div class="feature-item">
+            <span class="feature-icon">🔊</span>
+            <h3 class="feature-title">Guide de prononciation</h3>
+            <p class="feature-description">
+                Apprenez la bonne prononciation avec notre notation phonétique
+                internationale.
+            </p>
+        </div>
+        <div class="feature-item">
+            <span class="feature-icon">📱</span>
+            <h3 class="feature-title">100% Responsive</h3>
+            <p class="feature-description">
+                Utilisable sur tous vos appareils : ordinateur, tablette et
+                smartphone.
+            </p>
+        </div>
+        <div class="feature-item">
+            <span class="feature-icon">⚡</span>
+            <h3 class="feature-title">Ultra rapide</h3>
+            <p class="feature-description">
+                Site statique optimisé pour des performances maximales et un
+                chargement instantané.
+            </p>
+        </div>
+        <div class="feature-item">
+            <span class="feature-icon">🏷️</span>
+            <h3 class="feature-title">Catégories organisées</h3>
+            <p class="feature-description">
+                Mots classés par thèmes pour faciliter l'apprentissage et la
+                navigation.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <h3>🚀 Prêt à enrichir le dictionnaire ?</h3>
+    <p>
+        Vous pouvez facilement ajouter, modifier ou supprimer des traductions
+        sans connaissances techniques !
+    </p>
+    <div class="action-buttons">
+        <a href="/admin/" class="action-btn">✏️ Modifier le dictionnaire</a>
+        <a href="/fr-da/" class="action-btn">🇫🇷 Parcourir français</a>
+        <a href="/da-fr/" class="action-btn">🇩🇰 Parcourir danois</a>
+    </div>
+</div>
+
+<div class="help-section">
+    <h3 class="help-title">💡 Comment ça marche ?</h3>
+    <div class="help-content">
+        <p>
+            <strong>Pour les utilisateurs :</strong> Naviguez simplement entre
+            les deux sections du dictionnaire pour trouver vos traductions.
+            Utilisez la barre de recherche pour trouver rapidement un mot
+            spécifique.
+        </p>
+
+        <p>
+            <strong>Pour les contributeurs :</strong> Cliquez sur "✏️ Modifier
+            le dictionnaire" pour accéder à l'interface d'administration. Vous
+            pourrez alors :
+        </p>
+        <ul style="margin-left: 2rem; margin-bottom: 1rem">
+            <li>Ajouter de nouveaux mots et traductions</li>
+            <li>Modifier les entrées existantes</li>
+            <li>Organiser par catégories</li>
+            <li>Exporter/importer des données</li>
+        </ul>
+
+        <p>
+            <strong>Aucune compétence technique requise !</strong> L'interface
+            est conçue pour être utilisée par tout le monde, même sans
+            connaissances en informatique.
+        </p>
+    </div>
+</div>
+
+{{ end }}

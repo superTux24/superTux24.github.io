@@ -1,0 +1,738 @@
+{{ define "main" }}
+<style>
+.admin-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.admin-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.admin-header h1 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.admin-header p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+
+.tabs {
+    display: flex;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #7f8c8d;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+}
+
+.tab-button.active {
+    color: #3498db;
+    border-bottom-color: #3498db;
+}
+
+.tab-button:hover {
+    color: #2980b9;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.form-section {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.form-section h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.examples-container {
+    margin-top: 1rem;
+}
+
+.example-item {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    align-items: center;
+}
+
+.example-item input {
+    flex: 1;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.btn-success {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #219a52;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.dictionary-preview {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    padding: 1rem;
+    background: white;
+}
+
+.word-entry {
+    padding: 1rem;
+    border-bottom: 1px solid #ecf0f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.word-entry:last-child {
+    border-bottom: none;
+}
+
+.word-info h4 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.word-translation {
+    color: #3498db;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.word-category {
+    background: #ecf0f1;
+    color: #7f8c8d;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+.word-examples {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.word-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border-left-color: #28a745;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border-left-color: #dc3545;
+}
+
+.import-export-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.file-upload {
+    border: 2px dashed #ddd;
+    padding: 2rem;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.file-upload:hover {
+    border-color: #3498db;
+}
+
+.file-upload input[type="file"] {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .import-export-section {
+        grid-template-columns: 1fr;
+    }
+
+    .tabs {
+        flex-wrap: wrap;
+    }
+
+    .word-entry {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+</style>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>✏️ Gestionnaire du Dictionnaire</h1>
+        <p>Interface simple pour ajouter, modifier et gérer vos traductions</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-button active" onclick="showTab('add-word')">➕ Ajouter un mot</button>
+        <button class="tab-button" onclick="showTab('manage-words')">📝 Gérer les mots</button>
+        <button class="tab-button" onclick="showTab('import-export')">📁 Import/Export</button>
+        <button class="tab-button" onclick="showTab('instructions')">📖 Instructions</button>
+    </div>
+
+    <div id="alerts"></div>
+
+    <!-- Add Word Tab -->
+    <div id="add-word" class="tab-content active">
+        <div class="form-section">
+            <h3>Ajouter une nouvelle traduction</h3>
+            <form id="add-word-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="direction">Direction de traduction :</label>
+                        <select id="direction" required>
+                            <option value="fr_da">🇫🇷 Français → Danois 🇩🇰</option>
+                            <option value="da_fr">🇩🇰 Danois → Français 🇫🇷</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Catégorie :</label>
+                        <select id="category">
+                            <option value="">Choisir une catégorie...</option>
+                            <option value="salutation">Salutation / Hilsen</option>
+                            <option value="politesse">Politesse / Høflighed</option>
+                            <option value="nourriture">Nourriture / Mad</option>
+                            <option value="famille">Famille / Familie</option>
+                            <option value="travail">Travail / Arbejde</option>
+                            <option value="voyage">Voyage / Rejse</option>
+                            <option value="temps">Temps / Tid</option>
+                            <option value="couleurs">Couleurs / Farver</option>
+                            <option value="nombres">Nombres / Tal</option>
+                            <option value="autre">Autre / Andet</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="word">Mot original :</label>
+                        <input type="text" id="word" placeholder="Ex: bonjour" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="translation">Traduction :</label>
+                        <input type="text" id="translation" placeholder="Ex: hej, goddag" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="pronunciation">Prononciation (optionnel) :</label>
+                    <input type="text" id="pronunciation" placeholder="Ex: bɔ̃ʒuʁ">
+                </div>
+
+                <div class="examples-container">
+                    <label>Exemples d'utilisation :</label>
+                    <div id="examples-list">
+                        <div class="example-item">
+                            <input type="text" placeholder="Exemple 1: Bonjour ! → Hej!">
+                            <button type="button" class="btn btn-danger btn-small" onclick="removeExample(this)">✕</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-small" onclick="addExample()">➕ Ajouter un exemple</button>
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <button type="submit" class="btn btn-success">💾 Ajouter le mot</button>
+                    <button type="button" class="btn btn-primary" onclick="clearForm()">🔄 Effacer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Manage Words Tab -->
+    <div id="manage-words" class="tab-content">
+        <div class="form-section">
+            <h3>Mots existants dans le dictionnaire</h3>
+            <div style="margin-bottom: 1rem;">
+                <input type="text" id="search-words" placeholder="🔍 Rechercher un mot..." style="width: 100%; padding: 0.75rem; border: 2px solid #ddd; border-radius: 5px;">
+            </div>
+            <div class="tabs" style="border-bottom: 1px solid #ddd; margin-bottom: 1rem;">
+                <button class="tab-button active" onclick="showWordsTab('fr-da-words')">🇫🇷 → 🇩🇰 ({{ len .Site.Data.dictionary.fr_da }})</button>
+                <button class="tab-button" onclick="showWordsTab('da-fr-words')">🇩🇰 → 🇫🇷 ({{ len .Site.Data.dictionary.da_fr }})</button>
+            </div>
+
+            <div id="fr-da-words" class="dictionary-preview active">
+                {{ range $index, $entry := .Site.Data.dictionary.fr_da }}
+                <div class="word-entry" data-word="{{ .word }}" data-translation="{{ .translation }}">
+                    <div class="word-info">
+                        <h4>{{ .word }}</h4>
+                        <div class="word-translation">→ {{ .translation }}</div>
+                        {{ with .category }}<span class="word-category">{{ . }}</span>{{ end }}
+                        {{ with .examples }}
+                        <div class="word-examples">
+                            {{ range . }}<div>• {{ . }}</div>{{ end }}
+                        </div>
+                        {{ end }}
+                    </div>
+                    <div class="word-actions">
+                        <button class="btn btn-primary btn-small" onclick="editWord('fr_da', {{ $index }})">✏️</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteWord('fr_da', {{ $index }})">🗑️</button>
+                    </div>
+                </div>
+                {{ end }}
+            </div>
+
+            <div id="da-fr-words" class="dictionary-preview" style="display: none;">
+                {{ range $index, $entry := .Site.Data.dictionary.da_fr }}
+                <div class="word-entry" data-word="{{ .word }}" data-translation="{{ .translation }}">
+                    <div class="word-info">
+                        <h4>{{ .word }}</h4>
+                        <div class="word-translation">→ {{ .translation }}</div>
+                        {{ with .category }}<span class="word-category">{{ . }}</span>{{ end }}
+                        {{ with .examples }}
+                        <div class="word-examples">
+                            {{ range . }}<div>• {{ . }}</div>{{ end }}
+                        </div>
+                        {{ end }}
+                    </div>
+                    <div class="word-actions">
+                        <button class="btn btn-primary btn-small" onclick="editWord('da_fr', {{ $index }})">✏️</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteWord('da_fr', {{ $index }})">🗑️</button>
+                    </div>
+                </div>
+                {{ end }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Import/Export Tab -->
+    <div id="import-export" class="tab-content">
+        <div class="import-export-section">
+            <div class="form-section">
+                <h3></h3>📤 Exporter le dictionnaire</h3>
+                <p>Téléchargez une copie de sauvegarde de votre dictionnaire.</p>
+                <button class="btn btn-primary" onclick="exportDictionary()">💾 Télécharger JSON</button>
+                <button class="btn btn-success" onclick="exportToCSV()">📊 Télécharger CSV</button>
+            </div>
+
+            <div class="form-section">
+                <h3>📥 Importer des mots</h3>
+                <div class="file-upload" onclick="document.getElementById('file-input').click()">
+                    <input type="file" id="file-input" accept=".json,.csv" onchange="handleFileImport(this)">
+                    <div>🎯 C</div>liquez pour sélectionner un fichier</div>
+                    <div style="font-size: 0.9rem; color: #7f8c8d; margin-top: 0.5rem;">
+                        Formats supportés: JSON, CSV
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>🔄 Actions rapides</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="generateBackup()">🗃️ Créer une sauvegarde</button>
+                <button class="btn btn-success" onclick="optimizeDatabase()">⚡ Optimiser la base</button>
+                <button class="btn btn-danger" onclick="resetDatabase()">⚠️ Réinitialiser</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Instructions Tab -->
+    <div id="instructions" class="tab-content">
+        <div class="form-section">
+            <h3>📖 Mode d'emploi simple</h3>
+            <div style="line-height: 1.8;">
+                <h4>🎯 Pour ajouter des mots :</h4>
+                <ol>
+                    <li>Cliquez sur l'onglet "➕ Ajouter un mot"</li>
+                    <li>Choisissez la direction (Français → Danois ou Danois → Français)</li>
+                    <li>Remplissez le mot et sa traduction</li>
+                    <li>Ajoutez une catégorie et des exemples</li>
+                    <li>Cliquez sur "💾 Ajouter le mot"</li>
+                </ol>
+
+                <h4>✏️ Pour modifier des mots :</h4>
+                <ol>
+                    <li>Allez dans "📝 Gérer les mots"</li>
+                    <li>Trouvez le mot à modifier</li>
+                    <li>Cliquez sur le bouton "✏️" à côté du mot</li>
+                    <li>Modifiez les informations</li>
+                    <li>Sauvegardez vos changements</li>
+                </ol>
+
+                <h4>💾 Pour sauvegarder :</h4>
+                <ol>
+                    <li>Allez dans "📁 Import/Export"</li>
+                    <li>Cliquez sur "💾 Télécharger JSON"</li>
+                    <li>Gardez ce fichier en sécurité !</li>
+                </ol>
+
+                <div class="alert alert-success">
+                    <strong>💡 Astuce :</strong> Vos modifications sont automatiquement sauvegardées dans le navigateur.
+                    Pensez à télécharger une sauvegarde régulièrement !
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Dictionary data stored in browser
+let dictionaryData = {
+    fr_da: {{ .Site.Data.dictionary.fr_da | jsonify | safeJS }},
+    da_fr: {{ .Site.Data.dictionary.da_fr | jsonify | safeJS }}
+};
+
+// Tab functionality
+function showTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    document.getElementById(tabId).classList.add('active');
+    event.target.classList.add('active');
+}
+
+function showWordsTab(tabId) {
+    document.querySelectorAll('.dictionary-preview').forEach(tab => {
+        tab.style.display = 'none';
+    });
+    document.getElementById(tabId).style.display = 'block';
+
+    event.target.parentElement.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+}
+
+// Form functionality
+function addExample() {
+    const examplesList = document.getElementById('examples-list');
+    const exampleItem = document.createElement('div');
+    exampleItem.className = 'example-item';
+    exampleItem.innerHTML = `
+        <input type="text" placeholder="Nouvel exemple">
+        <button type="button" class="btn btn-danger btn-small" onclick="removeExample(this)">✕</button>
+    `;
+    examplesList.appendChild(exampleItem);
+}
+
+function removeExample(button) {
+    if (document.querySelectorAll('#examples-list .example-item').length > 1) {
+        button.parentElement.remove();
+    }
+}
+
+function clearForm() {
+    document.getElementById('add-word-form').reset();
+    const examplesList = document.getElementById('examples-list');
+    examplesList.innerHTML = `
+        <div class="example-item">
+            <input type="text" placeholder="Exemple 1: Bonjour ! → Hej!">
+            <button type="button" class="btn btn-danger btn-small" onclick="removeExample(this)">✕</button>
+        </div>
+    `;
+}
+
+function showAlert(message, type = 'success') {
+    const alertsContainer = document.getElementById('alerts');
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type}`;
+    alert.textContent = message;
+    alertsContainer.appendChild(alert);
+
+    setTimeout(() => {
+        alert.remove();
+    }, 5000);
+}
+
+// Add word functionality
+document.getElementById('add-word-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const direction = document.getElementById('direction').value;
+    const word = document.getElementById('word').value;
+    const translation = document.getElementById('translation').value;
+    const category = document.getElementById('category').value;
+    const pronunciation = document.getElementById('pronunciation').value;
+
+    const examples = [];
+    document.querySelectorAll('#examples-list input').forEach(input => {
+        if (input.value.trim()) {
+            examples.push(input.value.trim());
+        }
+    });
+
+    const newEntry = {
+        word: word,
+        translation: translation,
+        category: category,
+        examples: examples
+    };
+
+    if (pronunciation) {
+        newEntry.pronunciation = pronunciation;
+    }
+
+    dictionaryData[direction].push(newEntry);
+    saveDictionary();
+    showAlert(`Mot "${word}" ajouté avec succès !`);
+    clearForm();
+    refreshWordsList();
+});
+
+// Search functionality
+document.getElementById('search-words').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    document.querySelectorAll('.word-entry').forEach(entry => {
+        const word = entry.dataset.word.toLowerCase();
+        const translation = entry.dataset.translation.toLowerCase();
+
+        if (word.includes(searchTerm) || translation.includes(searchTerm)) {
+            entry.style.display = 'flex';
+        } else {
+            entry.style.display = 'none';
+        }
+    });
+});
+
+// Dictionary management
+function saveDictionary() {
+    localStorage.setItem('dictionaryData', JSON.stringify(dictionaryData));
+}
+
+function loadDictionary() {
+    const saved = localStorage.getItem('dictionaryData');
+    if (saved) {
+        dictionaryData = JSON.parse(saved);
+    }
+}
+
+function refreshWordsList() {
+    // This would ideally reload the page or update the DOM
+    // For now, we'll show a message
+    showAlert('Rechargez la page pour voir les changements', 'success');
+}
+
+function deleteWord(direction, index) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce mot ?')) {
+        dictionaryData[direction].splice(index, 1);
+        saveDictionary();
+        showAlert('Mot supprimé avec succès !');
+        refreshWordsList();
+    }
+}
+
+function editWord(direction, index) {
+    const entry = dictionaryData[direction][index];
+
+    // Fill the form with existing data
+    document.getElementById('direction').value = direction;
+    document.getElementById('word').value = entry.word;
+    document.getElementById('translation').value = entry.translation;
+    document.getElementById('category').value = entry.category || '';
+    document.getElementById('pronunciation').value = entry.pronunciation || '';
+
+    // Fill examples
+    const examplesList = document.getElementById('examples-list');
+    examplesList.innerHTML = '';
+
+    if (entry.examples && entry.examples.length > 0) {
+        entry.examples.forEach(example => {
+            const exampleItem = document.createElement('div');
+            exampleItem.className = 'example-item';
+            exampleItem.innerHTML = `
+                <input type="text" value="${example}">
+                <button type="button" class="btn btn-danger btn-small" onclick="removeExample(this)">✕</button>
+            `;
+            examplesList.appendChild(exampleItem);
+        });
+    } else {
+        addExample();
+    }
+
+    // Remove the old entry and switch to add form
+    dictionaryData[direction].splice(index, 1);
+    saveDictionary();
+    showTab('add-word');
+    showAlert('Mot chargé pour modification !', 'success');
+}
+
+// Import/Export functionality
+function exportDictionary() {
+    const dataStr = JSON.stringify(dictionaryData, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'dictionary-backup.json';
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+function exportToCSV() {
+    let csv = 'Direction,Word,Translation,Category,Examples\n';
+
+    dictionaryData.fr_da.forEach(entry => {
+        csv += `FR→DA,"${entry.word}","${entry.translation}","${entry.category || ''}","${(entry.examples || []).join('; ')}"\n`;
+    });
+
+    dictionaryData.da_fr.forEach(entry => {
+        csv += `DA→FR,"${entry.word}","${entry.translation}","${entry.category || ''}","${(entry.examples || []).join('; ')}"\n`;
+    });
+
+    const dataBlob = new Blob([csv], {type: 'text/csv'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'dictionary-export.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
+function handleFileImport(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            if (file.name.endsWith('.json')) {
+                const importedData = JSON.parse(e.target.result);
+                if (importedData.fr_da && importedData.da_fr) {
+                    dictionaryData = importedData;
+                    saveDictionary();
+                    showAlert('Dictionnaire importé avec succès !');
+                    refreshWordsList();
+                } else {
+                    showAlert('Format JSON invalide', 'error');
+                }
+            } else {
+                showAlert('Format de fichier non supporté', 'error');
+            }
+        } catch (error) {
+            showAlert('Erreur lors de l\'importation: ' + error.message, 'error');
+        }
+    };
+    reader.readAsText(file);
+}
+
+// Initialize
+loadDictionary();
+</script>
+{{ end }}

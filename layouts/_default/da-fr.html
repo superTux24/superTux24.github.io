@@ -1,0 +1,488 @@
+{{ define "main" }}
+<style>
+    .dictionary-header {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        padding: 3rem 2rem;
+        border-radius: var(--border-radius);
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .dictionary-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .dictionary-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-container {
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 1rem 1rem 1rem 3rem;
+        font-size: 1.1rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50px;
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--text-color);
+        transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: white;
+        background: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+        color: #7f8c8d;
+    }
+
+    .filter-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        background: white;
+        border: 2px solid #ecf0f1;
+        color: var(--text-color);
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: var(--danger-color);
+        color: white;
+        border-color: var(--danger-color);
+    }
+
+    .entries-container {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--box-shadow);
+    }
+
+    .entries-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .entries-count {
+        color: var(--secondary-color);
+        font-weight: 600;
+    }
+
+    .sort-dropdown {
+        padding: 0.5rem 1rem;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        background: white;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+
+    .entries-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .entry-card {
+        background: #f8f9fa;
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        border-left: 4px solid var(--danger-color);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .entry-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(231, 76, 60, 0.05),
+            transparent
+        );
+        transition: left 0.5s;
+    }
+
+    .entry-card:hover::before {
+        left: 100%;
+    }
+
+    .entry-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .entry-word {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .pronunciation {
+        font-size: 0.9rem;
+        color: #7f8c8d;
+        font-style: italic;
+        font-weight: 400;
+    }
+
+    .translation {
+        color: var(--danger-color);
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        background: rgba(231, 76, 60, 0.1);
+        border-radius: 5px;
+        border-left: 3px solid var(--danger-color);
+    }
+
+    .category {
+        display: inline-block;
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+        text-transform: capitalize;
+    }
+
+    .examples-section {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #ddd;
+    }
+
+    .examples-title {
+        font-weight: 600;
+        color: var(--secondary-color);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .example-item {
+        background: white;
+        padding: 0.75rem;
+        border-radius: 5px;
+        margin-bottom: 0.5rem;
+        border-left: 3px solid #27ae60;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+
+    .example-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 3rem;
+        color: #7f8c8d;
+    }
+
+    .no-results-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--danger-color);
+        text-decoration: none;
+        font-weight: 500;
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+        color: #c0392b;
+        transform: translateX(-5px);
+    }
+
+    @media (max-width: 768px) {
+        .dictionary-title {
+            font-size: 2rem;
+        }
+
+        .entries-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .filter-tabs {
+            justify-content: flex-start;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .filter-btn {
+            white-space: nowrap;
+        }
+
+        .entries-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .search-input {
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<a href="/" class="back-link">
+    ← Tilbage til startsiden / Retour à l'accueil
+</a>
+
+<div class="dictionary-header">
+    <h1 class="dictionary-title">🇩🇰 Danois → Français 🇫🇷</h1>
+    <p class="dictionary-subtitle">
+        Opdag {{ len .Site.Data.dictionary.da_fr }} oversættelser fra dansk til fransk
+    </p>
+
+    <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input
+            type="text"
+            id="search"
+            class="search-input"
+            placeholder="Søg efter et dansk ord..."
+            oninput="searchEntries()"
+        >
+    </div>
+</div>
+
+<div class="filter-tabs">
+    <button class="filter-btn active" onclick="filterByCategory('all')">Alle ord</button>
+    <button class="filter-btn" onclick="filterByCategory('hilsen')">Hilsner</button>
+    <button class="filter-btn" onclick="filterByCategory('høflighed')">Høflighed</button>
+    <button class="filter-btn" onclick="filterByCategory('mad')">Mad</button>
+    <button class="filter-btn" onclick="filterByCategory('familie')">Familie</button>
+    <button class="filter-btn" onclick="filterByCategory('arbejde')">Arbejde</button>
+    <button class="filter-btn" onclick="filterByCategory('rejse')">Rejse</button>
+</div>
+
+<div class="entries-container">
+    <div class="entries-header">
+        <div class="entries-count">
+            <span id="visible-count">{{ len .Site.Data.dictionary.da_fr }}</span> indgange vist
+        </div>
+        <select class="sort-dropdown" onchange="sortEntries(this.value)">
+            <option value="alphabetical">Alfabetisk rækkefølge</option>
+            <option value="category">Efter kategori</option>
+            <option value="recent">Nyeste først</option>
+        </select>
+    </div>
+
+    <div class="entries-grid" id="entries-grid">
+        {{ range sort .Site.Data.dictionary.da_fr "word" }}
+        <div class="entry-card"
+             data-word="{{ .word }}"
+             data-translation="{{ .translation }}"
+             data-category="{{ .category | default "" }}">
+
+            <div class="entry-word">
+                {{ .word }}
+                {{ with .pronunciation }}
+                <span class="pronunciation">[{{ . }}]</span>
+                {{ end }}
+            </div>
+
+            <div class="translation">
+                → {{ .translation }}
+            </div>
+
+            {{ with .category }}
+            <span class="category">{{ . }}</span>
+            {{ end }}
+
+            {{ with .examples }}
+            <div class="examples-section">
+                <div class="examples-title">Eksempler / Exemples</div>
+                {{ range . }}
+                <div class="example-item">{{ . }}</div>
+                {{ end }}
+            </div>
+            {{ end }}
+        </div>
+        {{ end }}
+    </div>
+
+    <div id="no-results" class="no-results" style="display: none;">
+        <span class="no-results-icon">🔍</span>
+        <h3>Ingen resultater fundet</h3>
+        <p>Prøv med andre søgeord eller skift filter.</p>
+    </div>
+</div>
+
+<script>
+function searchEntries() {
+    const searchTerm = document.getElementById('search').value.toLowerCase();
+    const entries = document.querySelectorAll('.entry-card');
+    let visibleCount = 0;
+
+    entries.forEach(entry => {
+        const word = entry.dataset.word.toLowerCase();
+        const translation = entry.dataset.translation.toLowerCase();
+        const text = entry.textContent.toLowerCase();
+
+        if (word.includes(searchTerm) || translation.includes(searchTerm) || text.includes(searchTerm)) {
+            entry.style.display = 'block';
+            visibleCount++;
+        } else {
+            entry.style.display = 'none';
+        }
+    });
+
+    updateVisibleCount(visibleCount);
+    toggleNoResults(visibleCount === 0);
+}
+
+function filterByCategory(category) {
+    const entries = document.querySelectorAll('.entry-card');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    let visibleCount = 0;
+
+    // Update active filter button
+    filterBtns.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    entries.forEach(entry => {
+        const entryCategory = entry.dataset.category.toLowerCase();
+
+        if (category === 'all' || entryCategory === category) {
+            entry.style.display = 'block';
+            visibleCount++;
+        } else {
+            entry.style.display = 'none';
+        }
+    });
+
+    updateVisibleCount(visibleCount);
+    toggleNoResults(visibleCount === 0);
+
+    // Clear search when filtering
+    document.getElementById('search').value = '';
+}
+
+function sortEntries(sortType) {
+    const container = document.getElementById('entries-grid');
+    const entries = Array.from(container.querySelectorAll('.entry-card'));
+
+    entries.sort((a, b) => {
+        switch(sortType) {
+            case 'alphabetical':
+                return a.dataset.word.localeCompare(b.dataset.word);
+            case 'category':
+                const catA = a.dataset.category || 'zzz';
+                const catB = b.dataset.category || 'zzz';
+                if (catA === catB) {
+                    return a.dataset.word.localeCompare(b.dataset.word);
+                }
+                return catA.localeCompare(catB);
+            case 'recent':
+                // For demonstration, reverse alphabetical order
+                return b.dataset.word.localeCompare(a.dataset.word);
+            default:
+                return 0;
+        }
+    });
+
+    // Re-append sorted entries
+    entries.forEach(entry => container.appendChild(entry));
+}
+
+function updateVisibleCount(count) {
+    document.getElementById('visible-count').textContent = count;
+}
+
+function toggleNoResults(show) {
+    const noResults = document.getElementById('no-results');
+    const entriesGrid = document.getElementById('entries-grid');
+
+    if (show) {
+        noResults.style.display = 'block';
+        entriesGrid.style.display = 'none';
+    } else {
+        noResults.style.display = 'none';
+        entriesGrid.style.display = 'grid';
+    }
+}
+
+// Add keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'f') {
+        e.preventDefault();
+        document.getElementById('search').focus();
+    }
+});
+
+// Add fade-in animation to cards
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.entry-card');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 50);
+        }, index * 50);
+    });
+});
+</script>
+
+{{ end }}

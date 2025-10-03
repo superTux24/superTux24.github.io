@@ -1,0 +1,66 @@
+{
+  "fr_da": [
+    {
+      "word": "bonjour",
+      "translation": "hej, goddag",
+      "category": "salutation",
+      "pronunciation": "bɔ̃ʒuʁ",
+      "examples": [
+        "Bonjour, comment allez-vous ? → Hej, hvordan har du det?",
+        "Dire bonjour → At sige hej"
+      ]
+    },
+    {
+      "word": "merci",
+      "translation": "tak",
+      "category": "politesse",
+      "pronunciation": "mɛʁsi",
+      "examples": [
+        "Merci beaucoup → Mange tak",
+        "Merci pour votre aide → Tak for din hjælp"
+      ]
+    },
+    {
+      "word": "au revoir",
+      "translation": "farvel",
+      "category": "salutation",
+      "pronunciation": "o ʁəvwaʁ",
+      "examples": [
+        "Au revoir ! → Farvel!",
+        "Dire au revoir → Sige farvel"
+      ]
+    }
+  ],
+  "da_fr": [
+    {
+      "word": "hej",
+      "translation": "bonjour, salut",
+      "category": "hilsen",
+      "pronunciation": "haj",
+      "examples": [
+        "Hej, hvordan går det? → Salut, comment ça va ?",
+        "Sige hej → Dire bonjour"
+      ]
+    },
+    {
+      "word": "tak",
+      "translation": "merci",
+      "category": "høflighed",
+      "pronunciation": "tag",
+      "examples": [
+        "Mange tak → Merci beaucoup",
+        "Tak for hjælpen → Merci pour l'aide"
+      ]
+    },
+    {
+      "word": "farvel",
+      "translation": "au revoir",
+      "category": "hilsen",
+      "pronunciation": "faʁˈvɛl",
+      "examples": [
+        "Farvel! → Au revoir !",
+        "Sige farvel → Dire au revoir"
+      ]
+    }
+  ]
+}

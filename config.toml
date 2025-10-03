@@ -1,0 +1,42 @@
+baseURL = "https://yourdictionary.com/"
+languageCode = "fr"
+title = "Dictionnaire Français-Danois"
+defaultContentLanguage = "fr"
+
+[params]
+  description = "Dictionnaire bilingue français-danois et danois-français interactif"
+  author = "Louise Dictionary"
+  version = "1.0"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[menu]
+  [[menu.main]]
+    name = "Accueil"
+    url = "/"
+    weight = 10
+  [[menu.main]]
+    name = "🇫🇷 → 🇩🇰"
+    url = "/fr-da/"
+    weight = 20
+  [[menu.main]]
+    name = "🇩🇰 → 🇫🇷"
+    url = "/da-fr/"
+    weight = 30
+  [[menu.main]]
+    name = "✏️ Modifier"
+    url = "/admin/"
+    weight = 40
+
+[languages]
+  [languages.fr]
+    weight = 1
+    title = "Dictionnaire Français-Danois"
+    languageName = "Français"
+  [languages.da]
+    weight = 2
+    title = "Fransk-Dansk Ordbog"
+    languageName = "Dansk"
