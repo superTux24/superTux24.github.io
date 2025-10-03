@@ -1,0 +1,72 @@
+name: Build and deploy (Hugo → GitHub Pages)
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive # pull theme submodules too
+          fetch-depth: 0 # needed for .GitInfo / .Lastmod
+
+      # Set up GitHub Pages
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      # Install Hugo Extended (fast, maintained action)
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "latest"
+          extended: true # required for SCSS/SASS
+
+      # Optional: speed up builds that use Hugo Modules
+      - name: Cache Hugo modules
+        uses: actions/cache@v4
+        with:
+          path: /tmp/hugo_cache
+          key: ${{ runner.os }}-hugomod-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-hugomod-
+
+      # Build (injects the Pages base URL to avoid hardcoding)
+      - name: Build site
+        env:
+          HUGO_ENV: production
+        run: |
+          hugo --minify \
+               --baseURL "${{ steps.pages.outputs.base_url }}/" \
+               --cacheDir "/tmp/hugo_cache"
+
+      # Upload the ./public artifact for Pages
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
